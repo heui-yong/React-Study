@@ -5,6 +5,7 @@ import MemoListTopbar from "./MemoListTopbar";
 import { useAppContext } from "../AppContext";
 import { useEffect } from "react";
 import { sortByLatestTime } from "../utils/sortingUtils";
+import { formatDateKo } from "../utils/formatUtils";
 
 const MemoListDiv = styled.div`
   height: 100%;
@@ -65,13 +66,13 @@ const FolderTextDiv = styled.div`
 `;
 
 // 날짜를 포맷하는 유틸리티 함수
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // 1월은 0이므로 +1
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}.${month}.${day}.`;
-};
+// const formatDate = (dateString) => {
+//   const date = new Date(dateString);
+//   const year = date.getFullYear();
+//   const month = String(date.getMonth() + 1).padStart(2, "0"); // 1월은 0이므로 +1
+//   const day = String(date.getDate()).padStart(2, "0");
+//   return `${year}.${month}.${day}.`;
+// };
 
 export default function MemoList() {
   const { folderId } = useParams();
@@ -105,7 +106,7 @@ export default function MemoList() {
           <MemoItemLi key={memo.id}>
             <MemoLink to={`/folder/${folderId}/memo/${memo.id}`}>
               <TitleTextDiv>{memo.content}</TitleTextDiv>
-              <DateTimeTextDiv>{formatDate(memo.time)}</DateTimeTextDiv>
+              <DateTimeTextDiv>{formatDateKo(memo.time)}</DateTimeTextDiv>
               <FolderTextDiv>{state.folderName}</FolderTextDiv>
             </MemoLink>
           </MemoItemLi>

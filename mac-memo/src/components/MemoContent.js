@@ -5,6 +5,7 @@ import useFetch from "../hooks/useFetch";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { StyledTopbar } from "../styles/Topbar";
+import { formatDate } from "../utils/formatUtils";
 
 const ContentMain = styled.div`
   flex: 1;
@@ -48,7 +49,7 @@ export default function MemoContent() {
     if (data) {
       const testdate = new Date(data.time);
       if (!isNaN(testdate)) {
-        setDate(format(testdate, "yyyy년 M월 d일 a h:mm", { locale: ko }));
+        setDate(formatDate(testdate));
       } else {
         console.log("Invalid Date:", data.time);
       }
