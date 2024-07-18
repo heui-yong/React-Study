@@ -1,9 +1,10 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import AddFolderPopup from "./AddFolderPopup";
 import FolderCount from "./FolderCount";
+import useCreateFolder from "../hooks/useCreateFolder";
 
 const FolderListUl = styled.ul`
   list-style-type: none;
@@ -55,7 +56,15 @@ const AddButton = styled.button`
 
 export default function FolderList() {
   const { data, loading, error } = useFetch("http://localhost:3001/folder");
+  const [folders, setFolders] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const { createFolder } = useCreateFolder();
+
+  useEffect(() => {
+    if (data) {
+      setFolders(data);
+    }
+  }, [data]);
 
   const handleOpenPopup = () => {
     setIsPopupOpen(true);
@@ -66,9 +75,9 @@ export default function FolderList() {
   };
 
   const handleConfirm = (newFolderName) => {
-    console.log("Confirmed with folder name:", newFolderName);
-    console.log(data.length);
     setIsPopupOpen(false);
+    const url = `http://localhost:3001/folder`;
+    createFolder(url, folders, newFolderName, setFolders);
   };
 
   if (loading) {
@@ -81,7 +90,7 @@ export default function FolderList() {
 
   return (
     <FolderListUl>
-      {data.map((folder) => (
+      {folders.map((folder) => (
         <FolderItemLi key={folder.id}>
           <FolderLink
             to={`/folder/${folder.id}`}
