@@ -5,6 +5,7 @@ import useFetch from "../hooks/useFetch";
 import AddFolderPopup from "./AddFolderPopup";
 import FolderCount from "./FolderCount";
 import useCreateFolder from "../hooks/useCreateFolder";
+import { sortByLatestId } from "../utils/sortingUtils";
 
 const FolderListUl = styled.ul`
   list-style-type: none;
@@ -90,7 +91,7 @@ export default function FolderList() {
 
   return (
     <FolderListUl>
-      {folders.map((folder) => (
+      {sortByLatestId(folders).map((folder) => (
         <FolderItemLi key={folder.id}>
           <FolderLink
             to={`/folder/${folder.id}`}
