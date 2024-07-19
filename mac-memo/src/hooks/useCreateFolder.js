@@ -1,5 +1,3 @@
-// hooks/useCreateFolder.js
-
 import { useState } from "react";
 
 function useCreateFolder() {

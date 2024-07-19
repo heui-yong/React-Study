@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoTrashOutline } from "react-icons/io5";
 import { RiGalleryView2 } from "react-icons/ri";
 import { FaListUl } from "react-icons/fa6";
 import styled from "styled-components";
 import { StyledTopbar } from "../styles/Topbar";
+import { useState, useEffect } from "react";
+import useDelete from "../hooks/uesDelete";
 
 const SortIcon = styled.div`
   display: flex;
@@ -35,6 +37,42 @@ const TopButton = styled(Link)`
 `;
 
 export default function MemoListTopbar() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [link, setLink] = useState();
+  const { deleteContent, loading, error } = useDelete();
+
+  const handleDelete = (url) => {
+    deleteContent(url, () => console.log("delete!"));
+  };
+
+  useEffect(() => {
+    if (link) {
+      navigate(link, { replace: true });
+    }
+  }, [link, navigate]);
+
+  const delBtnOnClick = () => {
+    const path = location.pathname;
+
+    const folderRegex = /^\/folder\/(\d+)$/;
+    const memoRegex = /^\/folder\/(\d+)\/memo\/(\d+)$/;
+
+    if (folderRegex.test(path)) {
+      setLink(`/folder/1`);
+    } else if (memoRegex.test(path)) {
+      const match = path.match(memoRegex);
+      const folderId = match[1];
+      const memoId = match[2];
+      console.log(2, `Folder ID: ${folderId}, Memo ID: ${memoId}`);
+      handleDelete(`http://localhost:3001/memo/${memoId}`);
+      setLink(`/folder/${folderId}`);
+    } else {
+      console.log("Unknown path:", path);
+    }
+    console.log(link);
+  };
+
   return (
     <StyledTopbar>
       <SortIcon>
@@ -46,7 +84,7 @@ export default function MemoListTopbar() {
         </TopButton>
       </SortIcon>
       <SortIcon>
-        <TopButton>
+        <TopButton onClick={delBtnOnClick}>
           <IoTrashOutline />
         </TopButton>
       </SortIcon>

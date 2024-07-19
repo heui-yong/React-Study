@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
 import { StyledTopbar } from "../styles/Topbar";
 import { formatDate } from "../utils/formatUtils";
 

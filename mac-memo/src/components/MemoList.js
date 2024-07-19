@@ -65,15 +65,6 @@ const FolderTextDiv = styled.div`
   font-size: 0.9em; /* 날짜 텍스트의 폰트 크기 설정 */
 `;
 
-// 날짜를 포맷하는 유틸리티 함수
-// const formatDate = (dateString) => {
-//   const date = new Date(dateString);
-//   const year = date.getFullYear();
-//   const month = String(date.getMonth() + 1).padStart(2, "0"); // 1월은 0이므로 +1
-//   const day = String(date.getDate()).padStart(2, "0");
-//   return `${year}.${month}.${day}.`;
-// };
-
 export default function MemoList() {
   const { folderId } = useParams();
   const url =

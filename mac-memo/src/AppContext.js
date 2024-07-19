@@ -6,6 +6,8 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [state, setState] = useState({
     folderName: "",
+    folderList: [],
+    memoList: [],
     // 다른 상태들...
   });
 
