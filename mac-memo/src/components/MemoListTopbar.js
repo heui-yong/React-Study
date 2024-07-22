@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IoTrashOutline } from "react-icons/io5";
 import { RiGalleryView2 } from "react-icons/ri";
 import { FaListUl } from "react-icons/fa6";
@@ -12,7 +12,7 @@ const SortIcon = styled.div`
   justify-content: center;
 `;
 
-const TopButton = styled(Link)`
+const TopButton = styled.div`
   width: 15px;
   height: 15px;
   background-color: transparent; // 배경색을 투명하게 설정
@@ -63,6 +63,7 @@ export default function MemoListTopbar({ onDelete }) {
 
       handleDelete(`http://localhost:3001/folder/${folderId}`);
       setLink(`/folder/1`);
+      console.log("link:", link);
     } else if (memoRegex.test(path)) {
       const match = path.match(memoRegex);
       const folderId = match[1];
