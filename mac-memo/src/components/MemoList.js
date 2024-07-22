@@ -90,8 +90,9 @@ export default function MemoList() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <MemoListDiv>
-      <MemoListTopbar />
+    // <MemoListDiv>
+    <>
+      {/* <MemoListTopbar /> */}
       <MemoListUl>
         {sortByLatestTime(data).map((memo) => (
           <MemoItemLi key={memo.id}>
@@ -103,6 +104,7 @@ export default function MemoList() {
           </MemoItemLi>
         ))}
       </MemoListUl>
-    </MemoListDiv>
+    </>
+    // </MemoListDiv>
   );
 }

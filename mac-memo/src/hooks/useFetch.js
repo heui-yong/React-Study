@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAppContext } from "../AppContext";
-import axios from "axios";
+import { useEffect, useState, useCallback } from "react";
 
 export default function useFetch(url) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     setLoading(true);
     setError(null);
 
@@ -28,5 +26,9 @@ export default function useFetch(url) {
       });
   }, [url]);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
 }

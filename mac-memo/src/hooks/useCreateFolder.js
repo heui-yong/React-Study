@@ -4,7 +4,7 @@ function useCreateFolder() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const createFolder = async (url, folders, newFolderName, setFolders) => {
+  const createFolder = async (url, folders, newFolderName, updateState) => {
     setLoading(true);
     setError(null);
 
@@ -26,7 +26,8 @@ function useCreateFolder() {
 
       const newFolder = await response.json();
       alert("생성이 완료 되었습니다.");
-      setFolders((prevFolders) => [...prevFolders, newFolder]);
+      // setFolders((prevFolders) => [...prevFolders, newFolder]);
+      updateState({ folderList: [...folders, newFolder] });
     } catch (err) {
       console.error("Error:", err);
       alert("폴더 생성 중 오류가 발생했습니다.");

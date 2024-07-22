@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import styled from "styled-components";
 import FolderList from "./FolderList";
 import { Routes, Route } from "react-router-dom";
 import MemoList from "./MemoList";
 import MemoContent from "./MemoContent";
+import useDelete from "../hooks/uesDelete";
+import MemoListTopbar from "./MemoListTopbar";
+import useFetch from "../hooks/useFetch";
+import { useAppContext } from "../AppContext";
 
 const MainDiv = styled.div`
   display: flex;
@@ -16,18 +20,65 @@ const ContentDiv = styled.div`
   display: flex;
 `;
 
+const MemoListDiv = styled.div`
+  height: 100%;
+  width: 13rem;
+  border-right: 2px solid #000000; // 오른쪽에 수직선 추가
+`;
+
 export default function Main() {
+  const { data, loading, error, refetch } = useFetch(
+    "http://localhost:3001/folder"
+  );
+  const {
+    deleteContent,
+    loading: deleteLoading,
+    error: deleteError,
+  } = useDelete();
+
+  const { state, updateState } = useAppContext();
+
+  const handleDelete = useCallback(
+    (url) => {
+      if (window.confirm("정말로 이 폴더를 삭제하시겠습니까?")) {
+        deleteContent(url, () => {
+          console.log("delete!");
+          refetch(); // 삭제 후 리스트를 다시 불러옵니다.
+        });
+      }
+    },
+    [deleteContent, refetch]
+  );
+
+  useEffect(() => {
+    updateState({ folderList: data });
+    console.log("updateState({ folderList: data });");
+  }, [updateState, data]);
+
   return (
     <MainDiv>
       <FolderList />
       <ContentDiv>
         <Routes>
-          <Route path="/folder/:folderId" element={<MemoList />} />
+          <Route
+            path="/folder/:folderId"
+            element={
+              <>
+                <MemoListDiv>
+                  <MemoListTopbar onDelete={handleDelete} />
+                  <MemoList />
+                </MemoListDiv>
+              </>
+            }
+          />
           <Route
             path="/folder/:folderId/memo/:memoId"
             element={
               <>
-                <MemoList />
+                <MemoListDiv>
+                  <MemoListTopbar onDelete={handleDelete} />
+                  <MemoList />
+                </MemoListDiv>
                 <MemoContent />
               </>
             }

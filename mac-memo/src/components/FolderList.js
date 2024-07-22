@@ -6,6 +6,7 @@ import AddFolderPopup from "./AddFolderPopup";
 import FolderCount from "./FolderCount";
 import useCreateFolder from "../hooks/useCreateFolder";
 import { sortByLatestId } from "../utils/sortingUtils";
+import { useAppContext } from "../AppContext";
 
 const FolderListUl = styled.ul`
   list-style-type: none;
@@ -56,16 +57,10 @@ const AddButton = styled.button`
 `;
 
 export default function FolderList() {
-  const { data, loading, error } = useFetch("http://localhost:3001/folder");
-  const [folders, setFolders] = useState([]);
+  // const { data, loading, error } = useFetch("http://localhost:3001/folder");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { createFolder } = useCreateFolder();
-
-  useEffect(() => {
-    if (data) {
-      setFolders(data);
-    }
-  }, [data]);
+  const { state, updateState } = useAppContext();
 
   const handleOpenPopup = () => {
     setIsPopupOpen(true);
@@ -78,20 +73,16 @@ export default function FolderList() {
   const handleConfirm = (newFolderName) => {
     setIsPopupOpen(false);
     const url = `http://localhost:3001/folder`;
-    createFolder(url, folders, newFolderName, setFolders);
+    createFolder(url, state.folderList, newFolderName, updateState);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  useEffect(() => {
+    console.log("state.folderList", state.folderList);
+  }, [state.folderList]);
 
   return (
     <FolderListUl>
-      {sortByLatestId(folders).map((folder) => (
+      {sortByLatestId(state.folderList).map((folder) => (
         <FolderItemLi key={folder.id}>
           <FolderLink
             to={`/folder/${folder.id}`}

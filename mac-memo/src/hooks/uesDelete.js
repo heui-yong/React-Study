@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
-import { useAppContext } from "../AppContext";
 
 function useDelete() {
   const [loading, setLoading] = useState(false);
@@ -15,7 +14,7 @@ function useDelete() {
 
       if (response.status === 200) {
         alert("삭제가 완료되었습니다.");
-        onSuccess();
+        if (onSuccess) onSuccess();
       } else {
         throw new Error("삭제 요청이 실패했습니다.");
       }
@@ -26,7 +25,7 @@ function useDelete() {
     } finally {
       setLoading(false);
     }
-  }, []); // 의존성 배열이 비어 있으므로 이 함수는 컴포넌트의 생명주기 동안 한 번만 생성됩니다.
+  }, []);
 
   return { deleteContent, loading, error };
 }
