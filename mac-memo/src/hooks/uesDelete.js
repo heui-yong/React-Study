@@ -13,7 +13,6 @@ function useDelete() {
       const response = await axios.delete(url);
 
       if (response.status === 200) {
-        alert("삭제가 완료되었습니다.");
         if (onSuccess) onSuccess();
       } else {
         throw new Error("삭제 요청이 실패했습니다.");

@@ -1,17 +1,9 @@
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 import useFetch from "../hooks/useFetch";
-import MemoListTopbar from "./MemoListTopbar";
 import { useAppContext } from "../AppContext";
-import { useEffect } from "react";
 import { sortByLatestTime } from "../utils/sortingUtils";
-import { formatDateKo } from "../utils/formatUtils";
-
-const MemoListDiv = styled.div`
-  height: 100%;
-  width: 13rem;
-  border-right: 2px solid #000000; // 오른쪽에 수직선 추가
-`;
+import { formatDateKo, formatFolderName } from "../utils/formatUtils";
 
 const MemoListUl = styled.ul`
   list-style-type: none;
@@ -73,38 +65,26 @@ export default function MemoList() {
       : `http://localhost:3001/memo?folder=${folderId}`;
 
   const { data, loading, error } = useFetch(url);
-  const location = useLocation();
-  const { state, updateState } = useAppContext();
-
-  useEffect(() => {
-    if (
-      location.state &&
-      location.state.folderName &&
-      location.state.folderName !== state.folderName
-    ) {
-      updateState({ folderName: location.state.folderName });
-    }
-  }, [location.state, updateState, state.folderName]);
+  const { state } = useAppContext();
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    // <MemoListDiv>
     <>
-      {/* <MemoListTopbar /> */}
       <MemoListUl>
         {sortByLatestTime(data).map((memo) => (
           <MemoItemLi key={memo.id}>
             <MemoLink to={`/folder/${folderId}/memo/${memo.id}`}>
               <TitleTextDiv>{memo.content}</TitleTextDiv>
               <DateTimeTextDiv>{formatDateKo(memo.time)}</DateTimeTextDiv>
-              <FolderTextDiv>{state.folderName}</FolderTextDiv>
+              <FolderTextDiv>
+                {formatFolderName(state.folderList, memo.folder)}
+              </FolderTextDiv>
             </MemoLink>
           </MemoItemLi>
         ))}
       </MemoListUl>
     </>
-    // </MemoListDiv>
   );
 }

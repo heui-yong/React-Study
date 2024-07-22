@@ -15,3 +15,8 @@ export function formatDate(testdate) {
 
   return format(date, "yyyy년 M월 d일 a h:mm", { locale: ko });
 }
+
+export function formatFolderName(folderList, folderId) {
+  const folder = folderList.find((folder) => folder.id === folderId);
+  return folder ? folder.name : null;
+}

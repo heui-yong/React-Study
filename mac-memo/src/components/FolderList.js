@@ -1,7 +1,6 @@
 import { React, useEffect, useState } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-import useFetch from "../hooks/useFetch";
 import AddFolderPopup from "./AddFolderPopup";
 import FolderCount from "./FolderCount";
 import useCreateFolder from "../hooks/useCreateFolder";
@@ -84,10 +83,7 @@ export default function FolderList() {
     <FolderListUl>
       {sortByLatestId(state.folderList).map((folder) => (
         <FolderItemLi key={folder.id}>
-          <FolderLink
-            to={`/folder/${folder.id}`}
-            state={{ folderName: folder.name }} // state를 전달합니다.
-          >
+          <FolderLink to={`/folder/${folder.id}`}>
             <FolderName>{folder.name}</FolderName>
             <FolderCount id={folder.id} />
           </FolderLink>

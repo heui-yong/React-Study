@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import FolderList from "./FolderList";
 import { Routes, Route } from "react-router-dom";
@@ -30,13 +30,14 @@ export default function Main() {
   const { data, loading, error, refetch } = useFetch(
     "http://localhost:3001/folder"
   );
+
   const {
     deleteContent,
     loading: deleteLoading,
     error: deleteError,
   } = useDelete();
 
-  const { state, updateState } = useAppContext();
+  const { updateState } = useAppContext();
 
   const handleDelete = useCallback(
     (url) => {
@@ -54,6 +55,14 @@ export default function Main() {
     updateState({ folderList: data });
     console.log("updateState({ folderList: data });");
   }, [updateState, data]);
+
+  if (loading || deleteLoading) {
+    return <span>loading</span>;
+  }
+
+  if (error || deleteError) {
+    return <span>error {error}</span>;
+  }
 
   return (
     <MainDiv>
