@@ -35,6 +35,7 @@ export default function MemoContent() {
       if (data.content !== content) {
         patchContent(url, content, (updatedData) => {
           console.log("Memo updated successfully : ", updatedData);
+          window.scrollTo(0, 0);
           triggerReloadMemoList();
         });
       }
