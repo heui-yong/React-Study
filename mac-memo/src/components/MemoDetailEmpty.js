@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useState } from "react";
 
 const TimeContent = styled.div`
   color: rgb(125, 125, 125);
@@ -17,22 +16,11 @@ const InputContent = styled.textarea`
   resize: none; /* 필요 시 사용자가 크기를 조정하지 못하게 설정 */
 `;
 
-export default function MemoDetailEmpty({ onTextChange }) {
-  const [date] = useState();
-  const [content, setContent] = useState();
-
-  const handleTextChange = (event) => {
-    setContent(event.target.value);
-
-    onTextChange(event.target.value);
-  };
-
+export default function MemoDetailEmpty() {
   return (
     <>
-      <TimeContent>
-        <span>{date}</span>
-      </TimeContent>
-      <InputContent value={content} onChange={handleTextChange} />
+      <TimeContent></TimeContent>
+      <InputContent />
     </>
   );
 }

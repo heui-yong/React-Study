@@ -27,6 +27,12 @@ const MemoListDiv = styled.div`
   height: 100%;
   width: 13rem;
   border-right: 2px solid #000000; // 오른쪽에 수직선 추가
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const ContentMain = styled.div`

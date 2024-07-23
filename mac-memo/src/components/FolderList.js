@@ -7,6 +7,16 @@ import useCreateFolder from "../hooks/useCreateFolder";
 import { sortByLatestId } from "../utils/sortingUtils";
 import { useAppContext } from "../AppContext";
 
+const FolderListWrapper = styled.div`
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none; // Firefox를 위한 설정
+  -ms-overflow-style: none; // IE와 Edge를 위한 설정
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera를 위한 설정
+  }
+`;
+
 const FolderListUl = styled.ul`
   list-style-type: none;
   padding: 15px;
@@ -80,19 +90,24 @@ export default function FolderList() {
   }, [state.folderList]);
 
   return (
-    <FolderListUl>
-      {sortByLatestId(state.folderList).map((folder) => (
-        <FolderItemLi key={folder.id}>
-          <FolderLink to={`/folder/${folder.id}`}>
-            <FolderName>{folder.name}</FolderName>
-            <FolderCount id={folder.id} />
-          </FolderLink>
-        </FolderItemLi>
-      ))}
-      <AddButton onClick={handleOpenPopup}>새로운 폴더</AddButton>
-      {isPopupOpen && (
-        <AddFolderPopup onClose={handleClosePopup} onConfirm={handleConfirm} />
-      )}
-    </FolderListUl>
+    <FolderListWrapper>
+      <FolderListUl>
+        {sortByLatestId(state.folderList).map((folder) => (
+          <FolderItemLi key={folder.id}>
+            <FolderLink to={`/folder/${folder.id}`}>
+              <FolderName>{folder.name}</FolderName>
+              <FolderCount id={folder.id} />
+            </FolderLink>
+          </FolderItemLi>
+        ))}
+        <AddButton onClick={handleOpenPopup}>새로운 폴더</AddButton>
+        {isPopupOpen && (
+          <AddFolderPopup
+            onClose={handleClosePopup}
+            onConfirm={handleConfirm}
+          />
+        )}
+      </FolderListUl>
+    </FolderListWrapper>
   );
 }
