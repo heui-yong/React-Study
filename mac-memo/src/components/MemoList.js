@@ -4,6 +4,7 @@ import useFetch from "../hooks/useFetch";
 import { useAppContext } from "../AppContext";
 import { sortByLatestTime } from "../utils/sortingUtils";
 import { formatDateKo, formatFolderName } from "../utils/formatUtils";
+import { useEffect } from "react";
 
 const MemoListUl = styled.ul`
   list-style-type: none;
@@ -64,11 +65,19 @@ export default function MemoList() {
       ? `http://localhost:3001/memo`
       : `http://localhost:3001/memo?folder=${folderId}`;
 
-  const { data, loading, error } = useFetch(url);
+  const { data, loading, error, refetch } = useFetch(url);
   const { state } = useAppContext();
+
+  useEffect(() => {
+    refetch();
+  }, [state.reloadMemoList, refetch]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+
+  if (data.length === 0) {
+    return <span>메모 없음</span>;
+  }
 
   return (
     <>

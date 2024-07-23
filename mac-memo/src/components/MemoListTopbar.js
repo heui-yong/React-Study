@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IoTrashOutline } from "react-icons/io5";
 import { RiGalleryView2 } from "react-icons/ri";
 import { FaListUl } from "react-icons/fa6";
@@ -36,12 +36,12 @@ const TopButton = styled.div`
 `;
 
 export default function MemoListTopbar({ onDelete }) {
-  const location = useLocation();
+  const { memoId, folderId } = useParams();
   const navigate = useNavigate();
   const [link, setLink] = useState();
 
-  const handleDelete = (url) => {
-    onDelete(url);
+  const handleDelete = (url, link) => {
+    onDelete(url, link);
   };
 
   useEffect(() => {
@@ -52,27 +52,15 @@ export default function MemoListTopbar({ onDelete }) {
   }, [link, navigate]);
 
   const delBtnOnClick = () => {
-    const path = location.pathname;
-
-    const folderRegex = /^\/folder\/(\d+)$/;
-    const memoRegex = /^\/folder\/(\d+)\/memo\/(\d+)$/;
-
-    if (folderRegex.test(path)) {
-      const match = path.match(folderRegex);
-      const folderId = match[1];
-
-      handleDelete(`http://localhost:3001/folder/${folderId}`);
-      setLink(`/folder/1`);
-      console.log("link:", link);
-    } else if (memoRegex.test(path)) {
-      const match = path.match(memoRegex);
-      const folderId = match[1];
-      const memoId = match[2];
-
-      handleDelete(`http://localhost:3001/memo/${memoId}`);
-      setLink(`/folder/${folderId}`);
+    if (!memoId) {
+      console.log("delBtnOnClick :: 폴더 삭제");
+      handleDelete(`http://localhost:3001/folder/${folderId}`, `/folder/1`);
     } else {
-      console.log("Unknown path:", path);
+      console.log("delBtnOnClick :: 메모 삭제");
+      handleDelete(
+        `http://localhost:3001/memo/${memoId}`,
+        `/folder/${folderId}`
+      );
     }
   };
 

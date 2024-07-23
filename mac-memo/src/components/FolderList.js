@@ -76,7 +76,7 @@ export default function FolderList() {
   };
 
   useEffect(() => {
-    console.log("state.folderList", state.folderList);
+    console.log("Folder List state.folderList", state.folderList);
   }, [state.folderList]);
 
   return (
