@@ -8,9 +8,9 @@ import useDelete from "../hooks/uesDelete";
 import MemoListTopbar from "./MemoListTopbar";
 import useFetch from "../hooks/useFetch";
 import { useAppContext } from "../AppContext";
-import MemoContentEmpty from "./MemoContentEmpty";
 import MemoContentTopbar from "./MemoContentTopbar";
 import useCreateMemo from "../hooks/useCreateMemo";
+import usePatch from "../hooks/usePatch";
 
 const MainDiv = styled.div`
   display: flex;
@@ -63,16 +63,20 @@ export default function Main() {
   const { triggerReloadMemoList } = useAppContext();
   const [dataUpdated, setDataUpdated] = useState(false);
 
+  const [content, setContent] = useState("");
+  const { patchContent } = usePatch();
+
   const handleDelete = useCallback(
-    (url, link) => {
-      if (window.confirm("정말로 이 폴더를 삭제하시겠습니까?")) {
-        deleteContent(url, () => {
-          console.log("delete!");
-          setLink(link);
-          refetch(); // 삭제 후 리스트를 다시 불러옵니다.
-          setDataUpdated(false);
-        });
-      }
+    (url, navLink) => {
+      deleteContent(url, () => {
+        console.log("delete!");
+        if (navLink) {
+          console.log("navLink !== link!");
+          setLink(navLink);
+          refetch();
+        }
+        setDataUpdated(false);
+      });
     },
     [deleteContent, refetch]
   );
@@ -89,6 +93,26 @@ export default function Main() {
       });
     },
     [createMemo, refetch, triggerReloadMemoList]
+  );
+
+  const handleTextChange = useCallback((newContent) => {
+    setContent(newContent);
+    // 여기에 필요한 추가 로직 구현 (예: API 호출 등)
+    console.log("newContent : ", newContent);
+    setContent(newContent);
+  }, []);
+
+  const handleEditMemo = useCallback(
+    (url) => {
+      if (data.content !== content) {
+        patchContent(url, content, (updatedData) => {
+          console.log("Memo updated successfully : ", updatedData);
+          window.scrollTo(0, 0);
+          triggerReloadMemoList();
+        });
+      }
+    },
+    [content, data.content, patchContent, triggerReloadMemoList]
   );
 
   useEffect(() => {
@@ -128,7 +152,7 @@ export default function Main() {
                 </MemoListDiv>
                 <ContentMain>
                   <MemoContentTopbar onAddMemo={handleAddMemo} />
-                  <MemoContentEmpty />
+                  <MemoContent />
                 </ContentMain>
               </>
             }
@@ -143,7 +167,13 @@ export default function Main() {
                     <MemoList />
                   </MemoListDiv1>
                 </MemoListDiv>
-                <MemoContent />
+                <ContentMain>
+                  <MemoContentTopbar
+                    onAddMemo={handleAddMemo}
+                    onEditMemo={handleEditMemo}
+                  />
+                  <MemoContent onTextChange={handleTextChange} />
+                </ContentMain>
               </>
             }
           />
