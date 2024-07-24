@@ -1,11 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import usePatch from "../hooks/usePatch";
 import { useAppContext } from "../AppContext";
 import MemoContentTopbar from "./MemoContentTopbar";
 import MemoDetail from "./MemoDetail";
+import useCreateMemo from "../hooks/useCreateMemo";
 
 const ContentMain = styled.div`
   flex: 1;
@@ -22,13 +23,23 @@ const MainContent = styled.div`
   background-color: rgb(28, 28, 28);
 `;
 
-export default function MemoContent() {
+export default function MemoContent(onAddMemo) {
   const { memoId } = useParams();
   const url = `http://localhost:3001/memo/${memoId}`;
-  const { data, loading, error } = useFetch(url);
+  const { data, loading, error, refetch } = useFetch(url);
   const [content, setContent] = useState();
-  const { patchContent, loading: patchLoading, error: patchError } = usePatch();
+  const { patchContent } = usePatch();
   const { triggerReloadMemoList } = useAppContext();
+  const { createMemo } = useCreateMemo();
+  const [link, setLink] = useState();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (link) {
+      navigate(link, { replace: true });
+      setLink(null);
+    }
+  }, [link, navigate]);
 
   const handleEditMemo = useCallback(
     (url) => {
@@ -43,20 +54,28 @@ export default function MemoContent() {
     [content, data.content, patchContent, triggerReloadMemoList]
   );
 
-  const handleAddMemo = () => {
-    console.log("addMemoBtnOnClick");
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleAddMemo = useCallback((folderId) => {
+    console.log("folderId : ", folderId);
+    const url = `http://localhost:3001/memo`;
+    createMemo(url, folderId, (createData) => {
+      console.log("create Memo!", createData);
+      triggerReloadMemoList();
+      setLink(`/folder/${createData.folder}/memo/${createData.id}`);
+      refetch();
+    });
+  });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleTextChange = useCallback((content) => {
     setContent(content);
   });
 
-  if (loading || patchLoading) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (error || patchError) {
+  if (error) {
     return <div>Error: {error}</div>;
   }
 

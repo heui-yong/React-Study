@@ -26,7 +26,13 @@ const ContentDiv = styled.div`
 const MemoListDiv = styled.div`
   height: 100%;
   width: 13rem;
+  display: flex;
+  flex-direction: column;
   border-right: 2px solid #000000; // 오른쪽에 수직선 추가
+`;
+
+const MemoListDiv1 = styled.div`
+  flex: 1;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -49,17 +55,9 @@ export default function Main() {
   const [link, setLink] = useState();
   const navigate = useNavigate();
 
-  const {
-    deleteContent,
-    loading: deleteLoading,
-    error: deleteError,
-  } = useDelete();
+  const { deleteContent, error: deleteError } = useDelete();
 
-  const {
-    createMemo,
-    loading: createLoading,
-    error: createError,
-  } = useCreateMemo();
+  const { createMemo, error: createError } = useCreateMemo();
 
   const { state, updateState } = useAppContext();
   const { triggerReloadMemoList } = useAppContext();
@@ -105,7 +103,7 @@ export default function Main() {
     }
   }, [updateState, data, link, navigate, state.folderList, dataUpdated]);
 
-  if (loading || deleteLoading || createLoading) {
+  if (loading) {
     return <span>loading</span>;
   }
 
@@ -124,7 +122,9 @@ export default function Main() {
               <>
                 <MemoListDiv>
                   <MemoListTopbar onDelete={handleDelete} />
-                  <MemoList />
+                  <MemoListDiv1>
+                    <MemoList />
+                  </MemoListDiv1>
                 </MemoListDiv>
                 <ContentMain>
                   <MemoContentTopbar onAddMemo={handleAddMemo} />
@@ -139,7 +139,9 @@ export default function Main() {
               <>
                 <MemoListDiv>
                   <MemoListTopbar onDelete={handleDelete} />
-                  <MemoList />
+                  <MemoListDiv1>
+                    <MemoList />
+                  </MemoListDiv1>
                 </MemoListDiv>
                 <MemoContent />
               </>
