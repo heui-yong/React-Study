@@ -109,10 +109,11 @@ export default function Main() {
           console.log("Memo updated successfully : ", updatedData);
           window.scrollTo(0, 0);
           triggerReloadMemoList();
+          refetch();
         });
       }
     },
-    [content, data.content, patchContent, triggerReloadMemoList]
+    [content, data.content, patchContent, refetch, triggerReloadMemoList]
   );
 
   useEffect(() => {
