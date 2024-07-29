@@ -66,16 +66,23 @@ export default function Main() {
   const [content, setContent] = useState("");
   const { patchContent } = usePatch();
 
+  const handleCreate = useCallback(() => {
+    console.log("handleCreate");
+    refetch();
+  }, [refetch]);
+
   const handleDelete = useCallback(
     (url, navLink) => {
       deleteContent(url, () => {
         console.log("delete!");
+
+        refetch();
         if (navLink) {
           console.log("navLink !== link!");
+          setDataUpdated(false);
           setLink(navLink);
           refetch();
         }
-        setDataUpdated(false);
       });
     },
     [deleteContent, refetch]
@@ -109,14 +116,18 @@ export default function Main() {
           console.log("Memo updated successfully : ", updatedData);
           window.scrollTo(0, 0);
           triggerReloadMemoList();
+          refetch();
         });
       }
     },
-    [content, data.content, patchContent, triggerReloadMemoList]
+    [content, data.content, patchContent, refetch, triggerReloadMemoList]
   );
 
   useEffect(() => {
-    if (data.length !== 0 && !dataUpdated) {
+    console.log("useEffect :: data = ", data);
+    console.log("dataUpdated = ", dataUpdated);
+    if (data.length !== 0 && !dataUpdated && data !== state.folderList) {
+      console.log("data.length !== 0 && !dataUpdated :: data = ", data);
       updateState({ folderList: data });
       setDataUpdated(true);
     }
@@ -137,7 +148,7 @@ export default function Main() {
 
   return (
     <MainDiv>
-      <FolderList />
+      <FolderList data={data} onCreate={handleCreate} />
       <ContentDiv>
         <Routes>
           <Route
