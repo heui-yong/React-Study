@@ -8,9 +8,9 @@ import useDelete from "../hooks/uesDelete";
 import MemoListTopbar from "./MemoListTopbar";
 import useFetch from "../hooks/useFetch";
 import { useAppContext } from "../AppContext";
-import MemoContentEmpty from "./MemoContentEmpty";
 import MemoContentTopbar from "./MemoContentTopbar";
 import useCreateMemo from "../hooks/useCreateMemo";
+import usePatch from "../hooks/usePatch";
 
 const MainDiv = styled.div`
   display: flex;
@@ -63,16 +63,27 @@ export default function Main() {
   const { triggerReloadMemoList } = useAppContext();
   const [dataUpdated, setDataUpdated] = useState(false);
 
+  const [content, setContent] = useState("");
+  const { patchContent } = usePatch();
+
+  const handleCreate = useCallback(() => {
+    console.log("handleCreate");
+    refetch();
+  }, [refetch]);
+
   const handleDelete = useCallback(
-    (url, link) => {
-      if (window.confirm("정말로 이 폴더를 삭제하시겠습니까?")) {
-        deleteContent(url, () => {
-          console.log("delete!");
-          setLink(link);
-          refetch(); // 삭제 후 리스트를 다시 불러옵니다.
+    (url, navLink) => {
+      deleteContent(url, () => {
+        console.log("delete!");
+
+        refetch();
+        if (navLink) {
+          console.log("navLink !== link!");
           setDataUpdated(false);
-        });
-      }
+          setLink(navLink);
+          refetch();
+        }
+      });
     },
     [deleteContent, refetch]
   );
@@ -91,8 +102,32 @@ export default function Main() {
     [createMemo, refetch, triggerReloadMemoList]
   );
 
+  const handleTextChange = useCallback((newContent) => {
+    setContent(newContent);
+    // 여기에 필요한 추가 로직 구현 (예: API 호출 등)
+    console.log("newContent : ", newContent);
+    setContent(newContent);
+  }, []);
+
+  const handleEditMemo = useCallback(
+    (url) => {
+      if (data.content !== content) {
+        patchContent(url, content, (updatedData) => {
+          console.log("Memo updated successfully : ", updatedData);
+          window.scrollTo(0, 0);
+          triggerReloadMemoList();
+          refetch();
+        });
+      }
+    },
+    [content, data.content, patchContent, refetch, triggerReloadMemoList]
+  );
+
   useEffect(() => {
-    if (data.length !== 0 && !dataUpdated) {
+    console.log("useEffect :: data = ", data);
+    console.log("dataUpdated = ", dataUpdated);
+    if (data.length !== 0 && !dataUpdated && data !== state.folderList) {
+      console.log("data.length !== 0 && !dataUpdated :: data = ", data);
       updateState({ folderList: data });
       setDataUpdated(true);
     }
@@ -113,7 +148,7 @@ export default function Main() {
 
   return (
     <MainDiv>
-      <FolderList />
+      <FolderList data={data} onCreate={handleCreate} />
       <ContentDiv>
         <Routes>
           <Route
@@ -128,7 +163,7 @@ export default function Main() {
                 </MemoListDiv>
                 <ContentMain>
                   <MemoContentTopbar onAddMemo={handleAddMemo} />
-                  <MemoContentEmpty />
+                  <MemoContent />
                 </ContentMain>
               </>
             }
@@ -143,7 +178,13 @@ export default function Main() {
                     <MemoList />
                   </MemoListDiv1>
                 </MemoListDiv>
-                <MemoContent />
+                <ContentMain>
+                  <MemoContentTopbar
+                    onAddMemo={handleAddMemo}
+                    onEditMemo={handleEditMemo}
+                  />
+                  <MemoContent onTextChange={handleTextChange} />
+                </ContentMain>
               </>
             }
           />

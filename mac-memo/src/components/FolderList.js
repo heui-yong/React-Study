@@ -65,11 +65,15 @@ const AddButton = styled.button`
   }
 `;
 
-export default function FolderList() {
+export default function FolderList({ data, onCreate }) {
   // const { data, loading, error } = useFetch("http://localhost:3001/folder");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { createFolder } = useCreateFolder();
   const { state, updateState } = useAppContext();
+
+  useEffect(() => {
+    console.log("FolderList: data = %o", data);
+  }, [data]);
 
   const handleOpenPopup = () => {
     setIsPopupOpen(true);
@@ -79,10 +83,11 @@ export default function FolderList() {
     setIsPopupOpen(false);
   };
 
-  const handleConfirm = (newFolderName) => {
+  const handleConfirm = async (newFolderName) => {
     setIsPopupOpen(false);
     const url = `http://localhost:3001/folder`;
-    createFolder(url, state.folderList, newFolderName, updateState);
+    await createFolder(url, state.folderList, newFolderName, updateState);
+    onCreate();
   };
 
   useEffect(() => {
@@ -92,7 +97,7 @@ export default function FolderList() {
   return (
     <FolderListWrapper>
       <FolderListUl>
-        {sortByLatestId(state.folderList).map((folder) => (
+        {sortByLatestId(data).map((folder) => (
           <FolderItemLi key={folder.id}>
             <FolderLink to={`/folder/${folder.id}`}>
               <FolderName>{folder.name}</FolderName>

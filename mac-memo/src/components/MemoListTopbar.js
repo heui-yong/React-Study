@@ -5,6 +5,7 @@ import { FaListUl } from "react-icons/fa6";
 import styled from "styled-components";
 import { StyledTopbar } from "../styles/Topbar";
 import { useState, useEffect } from "react";
+import useFetch from "../hooks/useFetch";
 
 const SortIcon = styled.div`
   display: flex;
@@ -39,6 +40,7 @@ export default function MemoListTopbar({ onDelete }) {
   const { memoId, folderId } = useParams();
   const navigate = useNavigate();
   const [link, setLink] = useState();
+  const { data } = useFetch(`http://localhost:3001/memo?folder=${folderId}`);
 
   const handleDelete = (url, link) => {
     onDelete(url, link);
@@ -55,6 +57,10 @@ export default function MemoListTopbar({ onDelete }) {
     if (!memoId) {
       console.log("delBtnOnClick :: 폴더 삭제");
       handleDelete(`http://localhost:3001/folder/${folderId}`, `/folder/1`);
+      data.forEach((memo) => {
+        const url = `http://localhost:3001/memo/${memo.id}`;
+        handleDelete(url, null);
+      });
     } else {
       console.log("delBtnOnClick :: 메모 삭제");
       handleDelete(
