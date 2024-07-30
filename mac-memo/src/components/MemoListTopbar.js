@@ -73,10 +73,18 @@ export default function MemoListTopbar({ onDelete }) {
   return (
     <StyledTopbar>
       <SortIcon>
-        <TopButton>
+        <TopButton
+          onClick={() => {
+            setLink(`/folder/${folderId}`);
+          }}
+        >
           <FaListUl />
         </TopButton>
-        <TopButton>
+        <TopButton
+          onClick={() => {
+            setLink(`/folder/${folderId}/grid`);
+          }}
+        >
           <RiGalleryView2 />
         </TopButton>
       </SortIcon>
