@@ -11,6 +11,7 @@ import { useAppContext } from "../AppContext";
 import MemoContentTopbar from "./MemoContentTopbar";
 import useCreateMemo from "../hooks/useCreateMemo";
 import usePatch from "../hooks/usePatch";
+import MemoListGrid from "./MemoListGrid";
 
 const MainDiv = styled.div`
   display: flex;
@@ -46,6 +47,29 @@ const ContentMain = styled.div`
   display: flex;
   flex-direction: column; /* 세로 방향으로 배치 */
   height: 100vh; /* 전체 뷰포트 높이 */
+`;
+
+const GridContentTopbar = styled.div`
+  display: flex;
+
+  & > div {
+    flex: 1;
+  }
+
+  & > div:first-child {
+    flex: 2; /* 첫 번째 컴포넌트의 너비 비율 */
+  }
+
+  & > div:last-child {
+    flex: 3; /* 두 번째 컴포넌트의 너비 비율 */
+  }
+`;
+
+const GridContent = styled.div`
+  flex: 1;
+  display: flex;
+  height: 100vh; /* 전체 뷰포트 높이 */
+  flex-direction: column; /* 세로 방향으로 배치 */
 `;
 
 export default function Main() {
@@ -186,6 +210,36 @@ export default function Main() {
                   <MemoContent onTextChange={handleTextChange} />
                 </ContentMain>
               </>
+            }
+          />
+          <Route
+            path="/folder/:folderId/grid"
+            element={
+              <GridContent>
+                <GridContentTopbar>
+                  <MemoListTopbar onDelete={handleDelete} />
+                  <MemoContentTopbar
+                    onAddMemo={handleAddMemo}
+                    onEditMemo={handleEditMemo}
+                  />
+                </GridContentTopbar>
+                <MemoListGrid />
+              </GridContent>
+            }
+          />
+          <Route
+            path="/folder/:folderId/grid/memo/:memoId"
+            element={
+              <GridContent>
+                <GridContentTopbar>
+                  <MemoListTopbar onDelete={handleDelete} />
+                  <MemoContentTopbar
+                    onAddMemo={handleAddMemo}
+                    onEditMemo={handleEditMemo}
+                  />
+                </GridContentTopbar>
+                <MemoContent onTextChange={handleTextChange} />
+              </GridContent>
             }
           />
         </Routes>
