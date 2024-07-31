@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import AddFolderPopup from "./AddFolderPopup";
 import FolderCount from "./FolderCount";
 import useCreateFolder from "../hooks/useCreateFolder";
@@ -66,10 +66,10 @@ const AddButton = styled.button`
 `;
 
 export default function FolderList({ data, onCreate }) {
-  // const { data, loading, error } = useFetch("http://localhost:3001/folder");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { createFolder } = useCreateFolder();
   const { state, updateState } = useAppContext();
+  const location = useLocation();
 
   useEffect(() => {
     console.log("FolderList: data = %o", data);
@@ -97,14 +97,21 @@ export default function FolderList({ data, onCreate }) {
   return (
     <FolderListWrapper>
       <FolderListUl>
-        {sortByLatestId(data).map((folder) => (
-          <FolderItemLi key={folder.id}>
-            <FolderLink to={`/folder/${folder.id}`}>
-              <FolderName>{folder.name}</FolderName>
-              <FolderCount id={folder.id} />
-            </FolderLink>
-          </FolderItemLi>
-        ))}
+        {sortByLatestId(data).map((folder) => {
+          const baseLink = `/folder/${folder.id}`;
+          const toLink = location.pathname.includes("/grid")
+            ? `${baseLink}/grid`
+            : baseLink;
+
+          return (
+            <FolderItemLi key={folder.id}>
+              <FolderLink to={toLink}>
+                <FolderName>{folder.name}</FolderName>
+                <FolderCount id={folder.id} />
+              </FolderLink>
+            </FolderItemLi>
+          );
+        })}
         <AddButton onClick={handleOpenPopup}>새로운 폴더</AddButton>
         {isPopupOpen && (
           <AddFolderPopup

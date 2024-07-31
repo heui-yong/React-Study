@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import FolderList from "./FolderList";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import MemoList from "./MemoList";
 import MemoContent from "./MemoContent";
 import useDelete from "../hooks/uesDelete";
@@ -78,6 +78,7 @@ export default function Main() {
   );
   const [link, setLink] = useState();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { deleteContent, error: deleteError } = useDelete();
 
@@ -119,11 +120,18 @@ export default function Main() {
       createMemo(url, folderId, (createData) => {
         console.log("create Memo!", createData);
         triggerReloadMemoList();
-        setLink(`/folder/${createData.folder}/memo/${createData.id}`);
+        const baseLink = `/folder/${createData.folder}`;
+
+        setLink(
+          location.pathname.includes("/grid")
+            ? `${baseLink}/grid/memo/${createData.id}`
+            : `${baseLink}/memo/${createData.id}`
+        );
+        // setLink(`/folder/${createData.folder}/memo/${createData.id}`);
         refetch();
       });
     },
-    [createMemo, refetch, triggerReloadMemoList]
+    [createMemo, location.pathname, refetch, triggerReloadMemoList]
   );
 
   const handleTextChange = useCallback((newContent) => {
